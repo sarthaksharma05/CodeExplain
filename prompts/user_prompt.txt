@@ -1,0 +1,18 @@
+ANALYZE ONLY THE PROVIDED CODE. Do not use any external context.
+
+Code:
+{{CODE}}
+
+Explanation language: {{LANGUAGE}}
+Difficulty: {{DIFFICULTY}}
+
+Instructions:
+- Detect the programming language and set `detected_language`.
+- Explain the snippet in the requested language (English/Hindi).
+- Follow the requested difficulty level:
+  - Beginner: explain as if to someone with no programming background.
+  - Intermediate: explain for undergraduate CS students.
+  - Advanced: explain using professional software engineering terminology.
+- Produce JSON that exactly matches the schema required by the system prompt.
+
+Return ONLY the JSON object (no markdown, no code fences, no additional text).

@@ -1,0 +1,18 @@
+The previously returned JSON failed validation. Your task is to RETURN ONLY
+corrected JSON that exactly matches the schema below. Do not add or remove
+fields, do not change the meaning of any content, and do not include any
+explanatory text.
+
+Required JSON schema (exact field names and types):
+
+{
+  "detected_language": string,
+  "summary": string,
+  "time_complexity": { "value": string, "explanation": string },
+  "space_complexity": { "value": string, "explanation": string },
+  "line_by_line": [ { "line_number": integer, "code": string, "explanation": string } ],
+  "improvements": [ string ],
+  "quiz": { "question": string, "options": [ string ], "correct_answer": string, "explanation": string }
+}
+
+Return ONLY the corrected JSON object now.
