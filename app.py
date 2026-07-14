@@ -26,7 +26,7 @@ if "codeexplain_theme" not in st.session_state:
 
 inject_global_styles(st.session_state["codeexplain_theme"])
 
-# Initialize a fresh lightweight agent on each rerun so .env changes are picked up.
+# Initialize a fresh lightweight agent on each rerun so config changes are picked up.
 st.session_state["codeexplain_agent"] = CodeExplainAgent()
 
 # Streamlit session state defaults required by the app

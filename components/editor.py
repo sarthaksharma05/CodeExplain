@@ -69,7 +69,7 @@ def _friendly_analysis_error(exc: Exception) -> str:
     if _has_cause(exc, GroqRateLimitError):
         return "Groq rate limit reached. Please wait a few minutes and try again."
     if _has_cause(exc, GroqAuthError):
-        return "Groq API authentication failed. Please check your GROQ_API_KEY in .env."
+        return "Groq API authentication failed. Please check your GROQ_API_KEY in Streamlit Secrets or .env."
     if _has_cause(exc, GroqTimeoutError):
         return "Groq took too long to respond. Please try again."
     if _has_cause(exc, GroqConnectionError):
@@ -77,7 +77,7 @@ def _friendly_analysis_error(exc: Exception) -> str:
     if isinstance(exc, GroqRequestError):
         return "Groq could not analyze the code right now. Please try again."
     if isinstance(exc, (ParseError, RepairFailedError)):
-        return "The AI response was too short or incomplete. Increase GROQ_MAX_TOKENS in .env and try again."
+        return "The AI response was too short or incomplete. Increase GROQ_MAX_TOKENS in Streamlit Secrets or .env and try again."
     return "Unable to analyze the code. Please try again."
 
 

@@ -20,6 +20,30 @@ from typing import Any, Dict, Optional, Sequence
 from dotenv import load_dotenv
 
 
+def _get_secret(key: str, default: Optional[str] = None) -> Optional[str]:
+    """Retrieve a configuration value from the environment or Streamlit Secrets.
+
+    Lookup order:
+      1. ``os.environ`` / ``os.getenv`` (set by `.env` or shell for local dev).
+      2. ``st.secrets`` (populated by Streamlit Community Cloud).
+      3. The provided *default*.
+
+    This helper keeps the client compatible with both local development
+    (using a `.env` file) and cloud deployment (using Streamlit Secrets)
+    without requiring any code changes between environments.
+    """
+    value = os.getenv(key)
+    if value:
+        return value
+    try:
+        import streamlit as st
+        if key in st.secrets:
+            return str(st.secrets[key])
+    except Exception:
+        pass
+    return default
+
+
 class GroqClientError(Exception):
     """Base class for Groq client errors."""
 
@@ -56,8 +80,8 @@ class GroqClient:
     validation; that responsibility belongs to the parser/validator
     layers.
 
-    Configuration is loaded from environment variables. See
-    `.env.example` for available settings.
+    Configuration is loaded from environment variables or Streamlit
+    Secrets. See `.env.example` for available settings.
     """
 
     def __init__(
@@ -81,16 +105,16 @@ class GroqClient:
         # edits to .env to replace values loaded by an earlier run.
         load_dotenv(override=True)
 
-        self.api_key = api_key or os.getenv("GROQ_API_KEY")
+        self.api_key = api_key or _get_secret("GROQ_API_KEY")
         if not self.api_key:
             raise MissingAPIKeyError("GROQ_API_KEY is required but not set")
 
-        self.model = model or os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+        self.model = model or _get_secret("GROQ_MODEL", "llama-3.3-70b-versatile")
         try:
             self.temperature = (
                 float(temperature)
                 if temperature is not None
-                else float(os.getenv("GROQ_TEMPERATURE", "0.2"))
+                else float(_get_secret("GROQ_TEMPERATURE", "0.2"))
             )
         except ValueError:
             self.temperature = 0.2
@@ -99,7 +123,7 @@ class GroqClient:
             self.max_tokens = (
                 int(max_tokens)
                 if max_tokens is not None
-                else int(os.getenv("GROQ_MAX_TOKENS", "4096"))
+                else int(_get_secret("GROQ_MAX_TOKENS", "4096"))
             )
         except ValueError:
             self.max_tokens = 4096
@@ -182,4 +206,3 @@ class GroqClient:
             return response.choices[0].message.content
         except Exception as exc:
             raise GroqAPIError("Failed to extract text from Groq response") from exc
-
